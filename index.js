@@ -37,8 +37,9 @@ async function cloneRepo() {
 // Call the cloneRepo function before starting the bot
 cloneRepo().then(() => {
     // Proceed with the rest of the bot setup
-    to this code make it use adm zip to clone the repo files when running it should then use the files to proceed to what it does but should start by geting all files her github.com/mrfrank-ofc/SUBZERO-BOT
 
+
+	
 const {
   default: makeWASocket,
     useMultiFileAuthState,
@@ -75,13 +76,13 @@ const {
   const util = require('util')
   const { sms, downloadMediaMessage, AntiDelete } = require('./lib')
   const FileType = require('file-type');
-  const axios = require('axios')
+//  const axios = require('axios')
   const { File } = require('megajs')
   const { fromBuffer } = require('file-type')
   const bodyparser = require('body-parser')
   const os = require('os')
   const Crypto = require('crypto')
-  const path = require('path')
+  //const path = require('path')
   const prefix = config.PREFIX
   
   const ownerNumber = ['263719647303']
