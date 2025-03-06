@@ -67,7 +67,7 @@ const setupBot = async () => {
 
     // Install dependencies
     console.log('📦 Installing dependencies...');
-    exec('npm install', (err, stdout, stderr) => {
+    exec('npm install --production', (err, stdout, stderr) => {
       if (err) {
         console.error('❌ Failed to install dependencies:', err);
         return;
