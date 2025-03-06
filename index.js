@@ -21,9 +21,11 @@ const {
   Browsers
 } = require('@whiskeysockets/baileys');
 
-const { exec } = require('child_process');
+const axios = require('axios');
 const fs = require('fs');
 const path = require('path');
+const AdmZip = require('adm-zip');
+const { exec } = require('child_process');
 const express = require('express');
 const app = express();
 const port = process.env.PORT || 9090;
@@ -32,17 +34,36 @@ const port = process.env.PORT || 9090;
 const setupBot = async () => {
   console.log('🚀 Downloading bot files from GitHub...');
 
-  // Clone the repository
-  exec('git clone https://github.com/mrfrank-ofc/SUBZERO-BOT.git', (err, stdout, stderr) => {
-    if (err) {
-      console.error('❌ Failed to clone repository:', err);
-      return;
-    }
+  const repoUrl = 'https://github.com/mrfrank-ofc/SUBZERO-BOT/archive/refs/heads/main.zip';
+  const zipPath = path.join(__dirname, 'SUBZERO-BOT.zip');
+  const extractPath = path.join(__dirname, 'SUBZERO-BOT');
 
-    console.log('✅ Repository cloned successfully.');
+  try {
+    // Download the repository as a ZIP file
+    const response = await axios({
+      method: 'get',
+      url: repoUrl,
+      responseType: 'stream',
+    });
+
+    const writer = fs.createWriteStream(zipPath);
+    response.data.pipe(writer);
+
+    await new Promise((resolve, reject) => {
+      writer.on('finish', resolve);
+      writer.on('error', reject);
+    });
+
+    console.log('✅ Repository downloaded successfully.');
+
+    // Extract the ZIP file
+    const zip = new AdmZip(zipPath);
+    zip.extractAllTo(extractPath, true);
+    console.log('✅ Repository extracted successfully.');
 
     // Navigate to the bot directory
-    process.chdir('SUBZERO-BOT');
+    const botDir = path.join(extractPath, 'SUBZERO-BOT-main');
+    process.chdir(botDir);
 
     // Install dependencies
     console.log('📦 Installing dependencies...');
@@ -65,7 +86,9 @@ const setupBot = async () => {
         console.log('✅ Bot started successfully.');
       });
     });
-  });
+  } catch (err) {
+    console.error('❌ Error during setup:', err);
+  }
 };
 
 // Start the setup process
